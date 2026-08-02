@@ -1,0 +1,18 @@
+{
+  "name": "kuetix/mysql",
+  "type": "package",
+  "version": "0.1.0",
+  "description": "Kuetix engine package: small reusable transitions and workflows over a MySQL connection (query, exec, ping)",
+  "author": "anar@kuetix.com",
+  "license": "MIT",
+  "workflows": [
+    "workflows/mysql/ping.wsl",
+    "workflows/mysql/query.wsl",
+    "workflows/mysql/query_row.wsl",
+    "workflows/mysql/exec.wsl"
+  ],
+  "dependencies": {},
+  "engine": "v0.1.4",
+  "publisher": "",
+  "keywords": ["kuetix", "kuetix/mysql", "mysql", "sql", "package", "module"]
+}

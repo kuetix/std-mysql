@@ -1,0 +1,41 @@
+module query
+
+import services/common
+
+workflow query {
+  start: DoOp
+
+  state DoOp {
+    action mysql/query.Query(
+      dsn: $args.dsn??"",
+      sqlText: $args.sqlText,
+      args: $args.args??[]
+    ) as result
+    on success -> Finish
+    on fail -> HandleError
+  }
+
+  state HandleError {
+    action services/common/errors.OnAnyError(
+      msg: "mysql query failed",
+      statusCode: 400
+    ) as errorHandler
+    on success -> RespondError
+  }
+
+  state Finish {
+    action services/common/response.Response(
+      value: $result,
+      statusCode: 200
+    ) as response
+    end ok
+  }
+
+  state RespondError {
+    action services/common/response.Response(
+      value: {error: $error.message},
+      statusCode: 400
+    ) as errorResponse
+    end fail
+  }
+}

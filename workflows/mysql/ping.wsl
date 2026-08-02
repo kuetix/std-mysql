@@ -1,0 +1,39 @@
+module ping
+
+import services/common
+
+workflow ping {
+  start: DoOp
+
+  state DoOp {
+    action mysql/database.Ping(
+      dsn: $args.dsn??""
+    ) as result
+    on success -> Finish
+    on fail -> HandleError
+  }
+
+  state HandleError {
+    action services/common/errors.OnAnyError(
+      msg: "mysql ping failed",
+      statusCode: 503
+    ) as errorHandler
+    on success -> RespondError
+  }
+
+  state Finish {
+    action services/common/response.Response(
+      value: $result,
+      statusCode: 200
+    ) as response
+    end ok
+  }
+
+  state RespondError {
+    action services/common/response.Response(
+      value: {error: $error.message},
+      statusCode: 503
+    ) as errorResponse
+    end fail
+  }
+}
